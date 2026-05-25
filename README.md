@@ -1,50 +1,141 @@
-# Welcome to your Expo app 👋
+# Monopoly Deal - The Card Game
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A multiplayer Monopoly Deal card game built with React Native (Expo) and FastAPI.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Real-time multiplayer support (2-5 players)
+- All 110 official Monopoly Deal cards
+- Complete game rules implementation
+- Beautiful animated card designs
+- WebSocket-based real-time communication
 
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- Python 3.9+
+- Expo Go app on your mobile device
+
+### Installation
+
+1. **Install frontend dependencies:**
    ```bash
+   cd deal-breaker
    npm install
    ```
 
-2. Start the app
-
+2. **Set up backend:**
    ```bash
-   npx expo start
+   cd backend
+   chmod +x run.sh
+   ./run.sh
+   ```
+   
+   Or manually:
+   ```bash
+   cd backend
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
    ```
 
-In the output, you'll find options to open the app in a
+### Running the App
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+1. **Start the backend server:**
+   ```bash
+   cd backend
+   ./run.sh
+   ```
+   Note the IP address displayed (e.g., `192.168.1.xxx`)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+2. **Start the Expo app:**
+   ```bash
+   cd deal-breaker
+   npm start
+   ```
 
-## Get a fresh project
+3. **Connect from Expo Go:**
+   - Open Expo Go on your phone
+   - Scan the QR code
+   - Enter your server IP in the app
 
-When you're ready, run:
+### Connecting Multiple Devices
 
-```bash
-npm run reset-project
+1. Make sure all devices are on the same WiFi network
+2. Enter your computer's local IP address in the app
+3. Create a room and share the 6-character room code
+
+## How to Play
+
+### Objective
+Be the first player to collect **3 complete property sets** of different colors.
+
+### Turn Structure
+1. **Draw Phase:** Draw 2 cards (5 if your hand is empty)
+2. **Action Phase:** Play up to 3 cards
+3. **Discard Phase:** Discard down to 7 cards if needed
+
+### Card Types
+
+| Type | Description |
+|------|-------------|
+| **Property** | Build your property sets |
+| **Money** | Add to your bank |
+| **Action** | Special abilities (Rent, Steal, etc.) |
+| **Rent** | Charge rent to other players |
+| **Wildcard** | Use as any property color |
+
+### Key Rules
+
+- **No change given** - Overpayments are not refunded
+- **Pay from table only** - Can't pay from your hand
+- **Just Say No** - Cancels any action against you
+- **Complete sets are protected** - Can't steal from them (except Deal Breaker)
+
+## Project Structure
+
+```
+deal-breaker/
+├── app/                    # Expo Router screens
+│   ├── (tabs)/            # Main tab navigation
+│   ├── lobby.tsx          # Game lobby
+│   └── game.tsx           # Main game screen
+├── backend/               # FastAPI backend
+│   ├── main.py           # Server & endpoints
+│   ├── game_engine.py    # Game logic
+│   ├── models.py         # Data models
+│   └── cards.py          # Card definitions
+├── components/
+│   ├── cards/            # Card components
+│   └── game/             # Game UI components
+├── constants/            # Game constants & card data
+├── services/             # API & WebSocket services
+└── stores/               # State management
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## API Endpoints
 
-## Learn more
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/rooms` | Create a new room |
+| POST | `/api/rooms/join` | Join an existing room |
+| POST | `/api/rooms/{id}/ready` | Toggle ready status |
+| POST | `/api/rooms/{id}/start` | Start the game |
+| POST | `/api/games/{id}/draw` | Draw cards |
+| POST | `/api/games/{id}/play` | Play a card |
+| POST | `/api/games/{id}/respond` | Respond to action |
+| POST | `/api/games/{id}/end-turn` | End your turn |
+| WS | `/ws/{roomId}/{playerId}` | Real-time updates |
 
-To learn more about developing your project with Expo, look at the following resources:
+## Tech Stack
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **Frontend:** React Native (Expo), TypeScript, React Native Reanimated
+- **Backend:** FastAPI, Python, WebSockets
+- **State:** React Context + Reducer
 
-## Join the community
+## License
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+MIT License - Feel free to use and modify!
